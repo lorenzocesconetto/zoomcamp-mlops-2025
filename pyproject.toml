@@ -5,11 +5,23 @@ description = "MLOps Zoomcamp 2025"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "apache-airflow>=3",
     "fastparquet>=2024.11.0",
     "hyperopt>=0.2.7",
     "ipykernel>=6.29.5",
     "mlflow>=2.22.0",
     "pandas>=2.2.3",
     "scikit-learn>=1.6.1",
-    "setuptools>=80.8.0",
+    "xgboost>=3.0.2",
+]
+
+[dependency-groups]
+dev = [
+    "graphviz>=0.20.3",
+    "isort>=6.0.1",
+]
+
+[tool.uv.workspace]
+members = [
+    "03-orchestration",
 ]

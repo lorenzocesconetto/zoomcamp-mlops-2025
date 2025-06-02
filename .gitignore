@@ -3,7 +3,12 @@ tmp*
 output/
 mlruns/
 artifacts/
+models/
 *.db
+logs/
+simple_auth_manager_passwords.json.generated
+.venv*
+data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
