@@ -14,9 +14,13 @@ from typing_extensions import NotRequired
 
 mlflow.set_experiment("nyc-taxi-experiment")
 
-for path in ["models", "data", "mlruns", "artifacts"]:
+for path in ["models", "data", "mlruns"]:
     folder = Path(path)
     folder.mkdir(exist_ok=True)
+
+CATEGORICAL = ["PULocationID", "DOLocationID"]
+NUMERICAL = ["trip_distance"]
+TARGET = "duration"
 
 
 class DataFrameMetadata(TypedDict):
@@ -77,15 +81,12 @@ def train_regressor_nyc_taxi():
 
         df = df[(df.duration >= 1) & (df.duration <= 60)]
 
-        categorical = ["PULocationID", "DOLocationID"]
-        df[categorical] = df[categorical].astype(str)
-
-        df["PU_DO"] = df["PULocationID"] + "_" + df["DOLocationID"]
+        df[CATEGORICAL] = df[CATEGORICAL].astype(str)
 
         print(f"{year=} {month=} total records after filtering: {len(df)}")
 
         output_path = f"./data/{year}_{month:02d}.parquet"
-        df.to_parquet(output_path)
+        df[CATEGORICAL + NUMERICAL + [TARGET]].to_parquet(output_path)
 
         return {
             "data_path": output_path,
@@ -98,9 +99,7 @@ def train_regressor_nyc_taxi():
     def dict_vectorize(meta: DataFrameMetadata, dv_path: str = None) -> DataFrameMetadata:
         df = pd.read_parquet(meta["data_path"])
 
-        categorical = ["PU_DO"]
-        numerical = ["trip_distance"]
-        dicts = df[categorical + numerical].to_dict(orient="records")
+        dicts = df[CATEGORICAL + NUMERICAL].to_dict(orient="records")
 
         if dv_path is None:
             dv = DictVectorizer(sparse=True)
@@ -134,8 +133,7 @@ def train_regressor_nyc_taxi():
 
         df = pd.read_parquet(meta["data_path"])
 
-        target = "duration"
-        y = df[target].values
+        y = df[TARGET].values
 
         # Save target values to file
         target_path = f"./data/target_{meta['year']}_{meta['month']:02d}.pkl"
@@ -222,11 +220,8 @@ def train_regressor_nyc_taxi():
                 with open(model_path, "wb") as f:
                     pickle.dump(lr, f)
 
-                # Now log the artifact (after the file exists)
-                mlflow.log_artifact(model_path, artifact_path="models_mlflow")
+                mlflow.sklearn.log_model(lr, artifact_path="models_mlflow")
 
-                # Also log using sklearn.log_model
-                mlflow.sklearn.log_model(lr, artifact_path="models_sklearn")
         return run.info.run_id
 
     ##################################
