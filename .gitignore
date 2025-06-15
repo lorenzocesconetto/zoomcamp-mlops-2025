@@ -9,6 +9,7 @@ logs/
 simple_auth_manager_passwords.json.generated
 .venv*
 data/
+*.bin
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
