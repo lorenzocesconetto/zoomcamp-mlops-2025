@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "apache-airflow>=3",
+    "boto3>=1.38.46",
     "evidently>=0.7.8",
     "fastparquet>=2024.11.0",
     "hyperopt>=0.2.7",
@@ -13,6 +14,7 @@ dependencies = [
     "jupyter>=1.1.1",
     "mlflow>=2.22.0",
     "pandas>=2.2.3",
+    "s3fs>=0.4.2",
     "scikit-learn==1.5.0",
     "xgboost>=3.0.2",
 ]
@@ -21,6 +23,7 @@ dependencies = [
 dev = [
     "graphviz>=0.20.3",
     "isort>=6.0.1",
+    "pytest>=8.4.1",
 ]
 
 [tool.uv.workspace]
